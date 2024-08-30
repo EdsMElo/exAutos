@@ -1,0 +1,11 @@
+gradio
+langchain
+chromadb
+spacy
+ocrmypdf
+PyPDF2
+ollama
+langchain
+langchain-core
+langchain-community
+scikit-learn
