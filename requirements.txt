@@ -9,3 +9,7 @@ langchain
 langchain-core
 langchain-community
 scikit-learn
+pdf2image
+pytesseract
+transformers
+torch
