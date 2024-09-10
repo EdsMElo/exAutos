@@ -45,7 +45,7 @@ COPY --from=builder /usr/local/bin /usr/local/bin
 COPY --from=builder /usr/local/share/ghostscript /usr/local/share/ghostscript
 
 # Copiar o ambiente virtual local
-COPY ollama ollama
+COPY .venv-exAutos .venv-exAutos
 
 # Copiar os arquivos do projeto
 COPY *.py .
@@ -65,17 +65,17 @@ ENV GRADIO_SERVER_NAME="0.0.0.0"
 ENV USER_AGENT="RAG"
 ENV PYTHONUNBUFFERED=1
 ENV OLLAMA_HOST=$OLLAMA_HOST
-ENV PATH="/app/ollama/Scripts:/usr/local/bin:$PATH"
+ENV PATH="/app/.venv-exAutos/Scripts:/usr/local/bin:$PATH"
 ENV LD_LIBRARY_PATH="/usr/local/lib:$LD_LIBRARY_PATH"
-ENV VIRTUAL_ENV="/app/ollama"
+ENV VIRTUAL_ENV="/app/.venv-exAutos"
 
 # Ativar o ambiente virtual e verificar/atualizar dependências
-RUN python -m venv /app/ollama && \
+RUN python -m venv /app/.venv-exAutos && \
     pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
 # Verificar a instalação
-RUN . /app/ollama/Scripts/activate && \
+RUN . /app/.venv-exAutos/Scripts/activate && \
     python --version && \
     pip list && \
     python -c "import sqlite3; print('SQLite3 version:', sqlite3.sqlite_version)" && \
