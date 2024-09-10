@@ -45,7 +45,7 @@ COPY --from=builder /usr/local/bin /usr/local/bin
 COPY --from=builder /usr/local/share/ghostscript /usr/local/share/ghostscript
 
 # Copiar o ambiente virtual local
-COPY .venv .venv
+COPY ollama ollama
 
 # Copiar os arquivos do projeto
 COPY *.py .
@@ -64,24 +64,18 @@ RUN apt-get update && \
 ENV GRADIO_SERVER_NAME="0.0.0.0"
 ENV USER_AGENT="RAG"
 ENV PYTHONUNBUFFERED=1
-ENV OLLAMA_HOST=http://ollama:11434
-ENV PATH="/app/.venv/bin:/usr/local/bin:$PATH"
+ENV OLLAMA_HOST=$OLLAMA_HOST
+ENV PATH="/app/ollama/Scripts:/usr/local/bin:$PATH"
 ENV LD_LIBRARY_PATH="/usr/local/lib:$LD_LIBRARY_PATH"
-ENV VIRTUAL_ENV="/app/.venv"
-
-# Verificar a estrutura do ambiente virtual e ajustar se necessário
-RUN if [ ! -d "/app/.venv/bin" ]; then \
-    echo "Estrutura do venv não encontrada, criando um novo..."; \
-    python -m venv /app/.venv; \
-    fi
+ENV VIRTUAL_ENV="/app/ollama"
 
 # Ativar o ambiente virtual e verificar/atualizar dependências
-RUN . /app/.venv/bin/activate && \
+RUN python -m venv /app/ollama && \
     pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
 # Verificar a instalação
-RUN . /app/.venv/bin/activate && \
+RUN . /app/ollama/Scripts/activate && \
     python --version && \
     pip list && \
     python -c "import sqlite3; print('SQLite3 version:', sqlite3.sqlite_version)" && \
@@ -92,4 +86,4 @@ RUN . /app/.venv/bin/activate && \
 EXPOSE 7863
 
 # Comando para executar a aplicação
-CMD ["/app/.venv/bin/python", "main.py"]
+CMD ["python", "main.py"]

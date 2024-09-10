@@ -28,7 +28,7 @@ def validate_document_context(text_sample):
 
     O texto está relacionado a processos legais, judiciais ou jurídicos? Responda 'SIM' ou 'NÃO' e justifique brevemente."""
 
-    response = ollama_llm(prompt, "", "llava-phi3:latest")
+    response = ollama_llm(prompt, "")
     
     # Extrair a resposta SIM/NÃO
     is_valid = response.strip().upper().startswith('SIM')
@@ -48,6 +48,6 @@ def get_rejection_reason(text_sample):
     
     Por que este texto não está relacionado ao contexto jurídico? Seja conciso em sua explicação."""
 
-    response = ollama_llm(prompt, "", "llava-phi3:latest")
+    response = ollama_llm(prompt, "")
     logger.info(f"Razão para rejeição: {response[:200]}...")  # Log dos primeiros 200 caracteres da razão
     return response

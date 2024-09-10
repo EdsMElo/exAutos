@@ -3,7 +3,12 @@ from ollama import Client
 
 logger = get_logger(__name__)
 
-def ollama_llm(question, context, model="phi3.5:3.8b"):
+MODEL_PROMPT = "gemma2:2b" # Respondeu o FAQ perfeitamente, 3 de 3.
+#MODEL_PROMPT = "gemma2:2b"
+#MODEL_PROMPT = "qwen2:1.5b"
+#MODEL_PROMPT = "qwen2:0.5b"
+
+def ollama_llm(question, context, model=MODEL_PROMPT):
     logger.info(f"Chamando Ollama LLM com a pergunta: {question} usando o modelo: {model}")
     
     try:
@@ -36,4 +41,4 @@ Resposta em português do Brasil:"""
         return f"Ocorreu um erro ao usar o Ollama: {str(e)}"
 
 def get_available_models():
-    return ["phi3.5:3.8b"]
+    return [MODEL_PROMPT]

@@ -7,13 +7,10 @@ from document_validator import validate_document_context, get_rejection_reason
 import ocrmypdf
 from pdf2image import convert_from_path
 import pytesseract
-from transformers import pipeline
 import PyPDF2
+from llm_interface import ollama_llm, MODEL_PROMPT
 
 logger = get_logger(__name__)
-
-# Carregar pipeline de classificação de texto
-classifier = pipeline("zero-shot-classification", model="facebook/bart-large-mnli")
 
 # Lista de possíveis classes para o tipo de processo e situação
 tipo_processo_classes = [
@@ -79,30 +76,34 @@ def extract_text_from_pdf(pdf_path, method='ocrmypdf'):
         return ""
 
 def classify_case_type(text):
-    # Primeiro, tenta classificar com base na lista completa
-    result = classifier(text, tipo_processo_classes)
-    top_label = result["labels"][0]
-    top_score = result["scores"][0]
+    prompt = f"""Classifique o tipo de processo jurídico com base no seguinte texto. Escolha a opção mais apropriada entre as seguintes categorias:
 
-    # Se a pontuação for baixa, tenta uma abordagem mais detalhada
-    if top_score < 0.5:  # Você pode ajustar este limiar conforme necessário
-        # Verifica se é um recurso
-        if "recurso" in text.lower():
-            for tipo in tipo_processo_classes:
-                if tipo.lower().startswith("recurso") and tipo.lower() in text.lower():
-                    return tipo
-            return "Outro Recurso"
-        
-        # Verifica outros tipos específicos
-        for tipo in tipo_processo_classes:
-            if tipo.lower() in text.lower():
-                return tipo
+{', '.join(tipo_processo_classes)}
 
-    return top_label
+Se nenhuma categoria se aplicar exatamente, escolha 'Outro Processo'.
+
+Texto para classificação:
+{text[:500]}  // Limitando a 500 caracteres para evitar tokens excessivos
+
+Responda apenas com o nome da categoria escolhida, sem explicações adicionais."""
+
+    response = ollama_llm(prompt, "", MODEL_PROMPT)
+    return response.strip()
 
 def classify_case_status(text):
-    result = classifier(text, situacao_classes)
-    return result["labels"][0]
+    prompt = f"""Classifique a situação atual do processo jurídico com base no seguinte texto. Escolha a opção mais apropriada entre as seguintes categorias:
+
+{', '.join(situacao_classes)}
+
+Se nenhuma categoria se aplicar exatamente, escolha 'Outro'.
+
+Texto para classificação:
+{text[:500]}  // Limitando a 500 caracteres para evitar tokens excessivos
+
+Responda apenas com o nome da categoria escolhida, sem explicações adicionais."""
+
+    response = ollama_llm(prompt, "", MODEL_PROMPT)
+    return response.strip()
 
 def load_and_split_document(source, extraction_method='ocrmypdf'):
     logger.info(f"Carregando dados do PDF usando o método {extraction_method}")

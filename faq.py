@@ -8,8 +8,8 @@ class FAQ:
     def __init__(self):
         self.questions = [
             "Qual é o tipo específico de recurso ou processo judicial mencionado nos autos?",
-            "Qual é a situação atual do processo?",
-            "Quais são os próximos passos processuais ou as consequências imediatas desta decisão para as partes envolvidas?"
+            "Qual é a situação atual do processo ou recurso?",
+            "Levando em consideração o resultado do processo ou recurso, quais os ações possiveis?"
         ]
 
     def get_faq_answers(self, collection, model, llm_interface) -> Dict[str, str]:

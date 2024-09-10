@@ -3,7 +3,7 @@ from config import OLLAMA_HOST, get_logger
 
 logger = get_logger(__name__)
 
-EMBEDDING_MODEL = "nomic-embed-text"
+EMBEDDING_MODEL = "paraphrase-multilingual"
 
 class ChromaCompatibleEmbedding:
     def __init__(self):

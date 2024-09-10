@@ -1,6 +1,6 @@
 from config import get_logger
 from prompt_manager import load_context, answer_question, process_faq
-from llm_interface import ollama_llm
+from llm_interface import ollama_llm, MODEL_PROMPT
 from frontend import create_interface, launch_interface
 
 logger = get_logger(__name__)
@@ -9,7 +9,7 @@ def main():
     logger.info("Iniciando a aplicação")
 
     collection = None
-    model = "llava-phi3:latest"
+    model = MODEL_PROMPT
     extraction_method = "ocrmypdf"  # Padrão, pode ser alterado para "pdf2image"
 
     def load_context_wrapper(*args):
